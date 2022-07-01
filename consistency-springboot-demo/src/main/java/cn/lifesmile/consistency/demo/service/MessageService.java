@@ -2,7 +2,7 @@ package cn.lifesmile.consistency.demo.service;
 
 /**
  * @author shenhuan
- * @Description TODO
+ * @Description MessageService
  * @Date 2022/6/29 2:33 下午
  */
 public interface MessageService {
