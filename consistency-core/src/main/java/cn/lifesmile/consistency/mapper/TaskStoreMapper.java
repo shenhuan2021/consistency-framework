@@ -47,8 +47,8 @@ public interface TaskStoreMapper {
                 + "fallback_class_name,"
                 + "fallback_error_msg,"
                 + "shard_key,"
-                + "gmt_create,"
-                + "gmt_modified"
+                + "created_time,"
+                + "updated_time"
             + ") VALUES("
                 + "#{taskId},"
                 + "#{taskStatus},"
@@ -86,7 +86,7 @@ public interface TaskStoreMapper {
             "execute_interval_sec,delay_time,task_parameter,performance_way," +
             "thread_way, error_msg, alert_expression, " +
             "alert_action_bean_name, fallback_class_name, fallback_error_msg,shard_key," +
-            "gmt_create, gmt_modified " +
+            "created_time, updated_time " +
             "FROM consistency_task " +
             "where " +
             "id = #{id} AND shard_key = #{shardKey}")
@@ -111,8 +111,8 @@ public interface TaskStoreMapper {
             @Result(column = "fallback_class_name", property = "fallbackClassName"),
             @Result(column = "fallback_error_msg", property = "fallbackErrorMsg"),
             @Result(column = "shard_key", property = "shardKey"),
-            @Result(column = "gmt_create", property = "gmtCreate"),
-            @Result(column = "gmt_modified", property = "gmtModified")
+            @Result(column = "created_time", property = "gmtCreate"),
+            @Result(column = "updated_time", property = "gmtModified")
     })
     ConsistencyTaskInstance getTaskByIdAndShardKey(@Param("id") Long id, @Param("shardKey") Long shardKey);
 
@@ -129,7 +129,7 @@ public interface TaskStoreMapper {
             "execute_interval_sec,delay_time,task_parameter,performance_way," +
             "thread_way, error_msg, alert_expression, " +
             "alert_action_bean_name, fallback_class_name, fallback_error_msg,shard_key," +
-            "gmt_create, gmt_modified " +
+            "created_time, updated_time " +
             "FROM consistency_task " +
             "WHERE " +
             "task_status <= 2 " +
@@ -156,8 +156,8 @@ public interface TaskStoreMapper {
             @Result(column = "fallback_class_name", property = "fallbackClassName"),
             @Result(column = "fallback_error_msg", property = "fallbackErrorMsg"),
             @Result(column = "shard_key", property = "shardKey"),
-            @Result(column = "gmt_create", property = "gmtCreate"),
-            @Result(column = "gmt_modified", property = "gmtModified")
+            @Result(column = "created_time", property = "gmtCreate"),
+            @Result(column = "updated_time", property = "gmtModified")
     })
     List<ConsistencyTaskInstance> listByUnFinishTask(@Param("startTime") Long startTime, @Param("endTime") Long endTime, @Param("limitTaskCount") Long limitTaskCount);
 

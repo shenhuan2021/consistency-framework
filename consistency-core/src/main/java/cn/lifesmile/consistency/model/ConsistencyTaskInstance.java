@@ -87,8 +87,9 @@ public class ConsistencyTaskInstance {
     private String fallbackErrorMsg;
     /**
      * 分片键
+     * 默认为0
      */
-    private Long shardKey;
+    private Long shardKey = 0L;
 
     private Date gmtCreate;
 

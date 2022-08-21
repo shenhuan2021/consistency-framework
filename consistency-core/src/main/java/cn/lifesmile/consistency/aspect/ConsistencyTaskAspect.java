@@ -1,12 +1,16 @@
 package cn.lifesmile.consistency.aspect;
 
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.json.JSONUtil;
 import cn.lifesmile.consistency.annotation.ConsistencyTask;
+import cn.lifesmile.consistency.config.ConsistencyConfiguration;
+import cn.lifesmile.consistency.custom.shard.SnowflakeShardingKeyGenerator;
 import cn.lifesmile.consistency.enums.ConsistencyTaskStatusEnum;
 import cn.lifesmile.consistency.enums.PerformanceEnum;
 import cn.lifesmile.consistency.model.ConsistencyTaskInstance;
 import cn.lifesmile.consistency.service.TaskStoreService;
 import cn.lifesmile.consistency.utils.ReflectTools;
+import cn.lifesmile.consistency.utils.ThreadLocalUtil;
 import cn.lifesmile.consistency.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -15,8 +19,12 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
@@ -28,19 +36,40 @@ import java.util.Date;
 public class ConsistencyTaskAspect {
 
     /**
+     * 缓存生成任务分片key的对象实例
+     */
+    private static Object cacheGenerateShardKeyClassInstance = null;
+
+    /**
+     * 缓存生成任务分片key的方法
+     */
+    private static Method cacheGenerateShardKeyMethod = null;
+
+    /**
      * 一致性任务的service
      */
     @Autowired
     private TaskStoreService taskStoreService;
 
+    @Autowired
+    private ConsistencyConfiguration consistencyConfiguration;
+
     @Around("@annotation(consistencyTask)")
-    public Object consistencyTask(ProceedingJoinPoint point, ConsistencyTask consistencyTask) {
+    public Object consistencyTask(ProceedingJoinPoint point, ConsistencyTask consistencyTask) throws Throwable {
         log.info("consistencyTask-> method:{} is called on {} args {}", point.getSignature().getName(), point.getThis(), point.getArgs());
 
+        // 是否是调度器在执行任务，如果是则直接执行任务即可，因为之前已经进行了任务持久化
+        if (ThreadLocalUtil.getFlag()) {
+            return point.proceed();
+        }
         ConsistencyTaskInstance taskInstance = createTaskInstance(consistencyTask, point);
-
+        // 初始化任务数据到数据库
+        // 若调度执行，放到数据库就可以了，等待调度执行
+        // 若立即执行：1. 同步执行 2.异步执行
         taskStoreService.initTask(taskInstance);
 
+        // 无论是调度执行还是立即执行的任务，任务初始化完成后不对目标方法进行访问，因此返回null
+        // 因为上一步已经记录好了，这里不需要执行了
         return null;
     }
 
@@ -89,7 +118,7 @@ public class ConsistencyTaskAspect {
         // 设置预期执行的时间
         instance.setExecuteTime(getExecuteTime(instance));
         // 设置分片key  暂时不只支持分片
-        instance.setShardKey(0L);
+        instance.setShardKey(consistencyConfiguration.getTaskSharded() ? generateShardKey() : 0L);
 
         return instance;
     }
@@ -110,4 +139,49 @@ public class ConsistencyTaskAspect {
             return System.currentTimeMillis(); // 执行时间就是当前时间
         }
     }
+
+    /**
+     * 获取分片键
+     *
+     * @return 生成分片键
+     */
+    private Long generateShardKey() {
+        // 如果配置文件中，没有配置自定义任务分片键生成类，则使用框架自带的
+        if (StringUtils.isEmpty(consistencyConfiguration.getShardingKeyGeneratorClassName())) {
+            return SnowflakeShardingKeyGenerator.getInstance().generateShardKey();
+        }
+        // 如果生成任务CACHE_GENERATE_SHARD_KEY_METHOD的方法存在，就直接调用该方法
+        if (!ObjectUtils.isEmpty(cacheGenerateShardKeyMethod) && !ObjectUtils.isEmpty(cacheGenerateShardKeyClassInstance)) {
+            try {
+                return (Long) cacheGenerateShardKeyMethod.invoke(cacheGenerateShardKeyClassInstance);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                log.error("使用自定义类生成任务分片键时，发生异常", e);
+            }
+        }
+        // 获取用户自定义的任务分片键的class
+        Class<?> shardingKeyGeneratorClass = getUserCustomShardingKeyGenerator();
+        if (!ObjectUtils.isEmpty(shardingKeyGeneratorClass)) {
+            String methodName = "generateShardKey";
+            Method generateShardKeyMethod = ReflectUtil.getMethod(shardingKeyGeneratorClass, methodName);
+            try {
+                Constructor<?> constructor = ReflectUtil.getConstructor(shardingKeyGeneratorClass);
+                cacheGenerateShardKeyClassInstance = constructor.newInstance();
+                cacheGenerateShardKeyMethod = generateShardKeyMethod;
+                return (Long) cacheGenerateShardKeyMethod.invoke(cacheGenerateShardKeyClassInstance);
+            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                log.error("使用自定义类生成任务分片键时，发生异常", e);
+                // 如果指定的自定义分片键生成报错，使用框架自带的
+                return SnowflakeShardingKeyGenerator.getInstance().generateShardKey();
+            }
+        }
+        return SnowflakeShardingKeyGenerator.getInstance().generateShardKey();
+    }
+
+    /**
+     * 获取ShardingKeyGenerator的实现类
+     */
+    private Class<?> getUserCustomShardingKeyGenerator() {
+        return ReflectTools.getClassByName(consistencyConfiguration.getShardingKeyGeneratorClassName());
+    }
+
 }

@@ -4,6 +4,7 @@ import cn.lifesmile.consistency.annotation.EnableConsistencyTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author shenhuan
@@ -14,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @Slf4j
 @EnableConsistencyTask
+@EnableScheduling
 public class App {
 
     public static void main(String[] args) {

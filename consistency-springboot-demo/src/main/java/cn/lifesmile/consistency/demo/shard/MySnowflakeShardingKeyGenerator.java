@@ -1,5 +1,6 @@
-package cn.lifesmile.consistency.custom.shard;
+package cn.lifesmile.consistency.demo.shard;
 
+import cn.lifesmile.consistency.custom.shard.ShardingKeyGenerator;
 import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,14 +9,7 @@ import lombok.SneakyThrows;
 import java.util.Calendar;
 import java.util.Properties;
 
-/**
- * 任务分片键生成器实现类
- * 如业务服务在配置文件中，没有配置任务分片键生成器的实现类，则使用该类作为分片键生成器
- *
- **/
-public final class SnowflakeShardingKeyGenerator implements ShardingKeyGenerator {
-
-    private static volatile SnowflakeShardingKeyGenerator instance;
+public final class MySnowflakeShardingKeyGenerator implements ShardingKeyGenerator {
 
     public static final long EPOCH;
 
@@ -34,9 +28,6 @@ public final class SnowflakeShardingKeyGenerator implements ShardingKeyGenerator
     private static final long WORKER_ID = 0;
 
     private static final int MAX_TOLERATE_TIME_DIFFERENCE_MILLISECONDS = 10;
-
-    private SnowflakeShardingKeyGenerator() {
-    }
 
     @Setter
     private static TimeService timeService = new TimeService();
@@ -117,21 +108,4 @@ public final class SnowflakeShardingKeyGenerator implements ShardingKeyGenerator
     private void vibrateSequenceOffset() {
         sequenceOffset = (byte) (~sequenceOffset & 1);
     }
-
-    /**
-     * 获取单例对象
-     *
-     * @return 单例对象
-     */
-    public static SnowflakeShardingKeyGenerator getInstance() {
-        if (instance == null) {
-            synchronized (SnowflakeShardingKeyGenerator.class) {
-                if (instance == null) {
-                    instance = new SnowflakeShardingKeyGenerator();
-                }
-            }
-        }
-        return instance;
-    }
-
 }

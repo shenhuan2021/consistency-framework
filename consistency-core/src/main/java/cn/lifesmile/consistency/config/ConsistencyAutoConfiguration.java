@@ -23,8 +23,8 @@ import static cn.lifesmile.consistency.utils.DefaultValueUtils.getOrDefault;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(value = {
-        TendConsistencyParallelTaskConfigProperties.class,
-        TendConsistencyFallbackConfigProperties.class,
+        ConsistencyParallelTaskConfigProperties.class,
+        ConsistencyFallbackConfigProperties.class,
         ShardModeConfigProperties.class
 })
 public class ConsistencyAutoConfiguration {
@@ -33,12 +33,12 @@ public class ConsistencyAutoConfiguration {
      * 执行调度任务的线程池的配置
      */
     @Autowired
-    private TendConsistencyParallelTaskConfigProperties consistencyParallelTaskConfigProperties;
+    private ConsistencyParallelTaskConfigProperties consistencyParallelTaskConfigProperties;
     /**
      * 降级逻辑相关参数配置
      */
     @Autowired
-    private TendConsistencyFallbackConfigProperties tendConsistencyFallbackConfigProperties;
+    private ConsistencyFallbackConfigProperties consistencyFallbackConfigProperties;
     /**
      * 分片模式参数配置
      */
@@ -51,12 +51,12 @@ public class ConsistencyAutoConfiguration {
      * @return 配置bean
      */
     @Bean
-    public TendConsistencyConfiguration tendConsistencyConfigService() {
+    public ConsistencyConfiguration ConsistencyConfigService() {
         // 对配置进行检查
         doConfigCheck(consistencyParallelTaskConfigProperties, shardModeConfigProperties);
 
         // 会通过builder设计模式，完成bean实例的构建
-        return TendConsistencyConfiguration
+        return ConsistencyConfiguration
                 .builder()
                 .threadCorePoolSize(getOrDefault(consistencyParallelTaskConfigProperties.getThreadCorePoolSize(), 5))
                 .threadMaxPoolSize(getOrDefault(consistencyParallelTaskConfigProperties.getThreadMaxPoolSize(), 5))
@@ -64,7 +64,7 @@ public class ConsistencyAutoConfiguration {
                 .threadPoolKeepAliveTime(getOrDefault(consistencyParallelTaskConfigProperties.getThreadPoolKeepAliveTime(), 60L))
                 .threadPoolKeepAliveTimeUnit(getOrDefault(consistencyParallelTaskConfigProperties.getThreadPoolKeepAliveTimeUnit(), "SECONDS"))
                 .taskScheduleTimeRangeClassName(getOrDefault(consistencyParallelTaskConfigProperties.getTaskScheduleTimeRangeClassName(), ""))
-                .failCountThreshold(getOrDefault(tendConsistencyFallbackConfigProperties.getFailCountThreshold(), 2))
+                .failCountThreshold(getOrDefault(consistencyFallbackConfigProperties.getFailCountThreshold(), 2))
                 .taskSharded(getOrDefault(shardModeConfigProperties.getTaskSharded(), false))
                 .shardingKeyGeneratorClassName(getOrDefault(shardModeConfigProperties.getShardingKeyGeneratorClassName(), ""))
                 .build();
@@ -76,7 +76,7 @@ public class ConsistencyAutoConfiguration {
      * @param consistencyParallelTaskConfigProperties 并行任务相关的配置
      * @param shardModeConfigProperties               分片模式相关配置
      */
-    private void doConfigCheck(TendConsistencyParallelTaskConfigProperties consistencyParallelTaskConfigProperties,
+    private void doConfigCheck(ConsistencyParallelTaskConfigProperties consistencyParallelTaskConfigProperties,
                                ShardModeConfigProperties shardModeConfigProperties) {
         TimeUnit timeUnit = null;
         if (!StringUtils.isEmpty(consistencyParallelTaskConfigProperties.getThreadPoolKeepAliveTimeUnit())) {

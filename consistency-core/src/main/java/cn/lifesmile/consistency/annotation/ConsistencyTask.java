@@ -1,7 +1,6 @@
 package cn.lifesmile.consistency.annotation;
 
 
-
 import cn.lifesmile.consistency.enums.PerformanceEnum;
 import cn.lifesmile.consistency.enums.ThreadWayEnum;
 
@@ -22,20 +21,21 @@ public @interface ConsistencyTask {
 
     /**
      * 任务名称
+     * 默认全限定名加方法签名
      *
      * @return 任务名称
      */
     String id() default "";
 
     /**
-     * 执行间隔默认20s
+     * 执行间隔默认60s
      *
      * @return 执行时间间隔
      */
     int executeIntervalSec() default 60;
 
     /**
-     * 初始化延迟时间 单位秒
+     * 初始化延迟时间 单位秒 默认60s
      *
      * @return 执行任务的延迟时间
      */
@@ -43,7 +43,7 @@ public @interface ConsistencyTask {
 
     /**
      * 告警表达式 如果满足告警表达式 会执行相关操作
-     *
+     *  默认："executeTimes > 1 && executeTimes < 5"
      * @return 告警表达式
      */
     String alertExpression() default "executeTimes > 1 && executeTimes < 5";
@@ -63,14 +63,14 @@ public @interface ConsistencyTask {
     Class<?> fallbackClass() default void.class;
 
     /**
-     * 执行模式
+     * 执行模式  立即执行或调度执行
      *
      * @return 执行模式
      */
     PerformanceEnum performanceWay() default PerformanceEnum.PERFORMANCE_RIGHT_NOW;
 
     /**
-     * 线程模型
+     * 线程模型 异步执行或同步执行
      *
      * @return 线程模型
      */

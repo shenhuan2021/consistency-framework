@@ -1,10 +1,10 @@
 package cn.lifesmile.consistency.manager;
 
-import cn.hutool.extra.spring.SpringUtil;
 import cn.lifesmile.consistency.exceptions.ConsistencyException;
 import cn.lifesmile.consistency.model.ConsistencyTaskInstance;
 import cn.lifesmile.consistency.service.TaskStoreService;
 import cn.lifesmile.consistency.utils.ReflectTools;
+import cn.lifesmile.consistency.utils.SpringUtil;
 import cn.lifesmile.consistency.utils.ThreadLocalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

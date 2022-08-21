@@ -9,14 +9,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * 控制同时可以有几个线程进行任务的执行的配置类
  *
- * @author zhonghuashishan
  **/
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ConfigurationProperties(prefix = "consistency.task.parallel.pool")
-public class TendConsistencyParallelTaskConfigProperties {
+public class ConsistencyParallelTaskConfigProperties {
 
     /**
      * 调度型任务线程池的核心线程数
@@ -39,7 +38,7 @@ public class TendConsistencyParallelTaskConfigProperties {
      */
     public String threadPoolKeepAliveTimeUnit = "SECONDS";
     /**
-     * 这里要配置类型全路径且类要实现com.ruyuan.consistency.custom.query.TaskTimeRangeQuery接口 如：com.xxx.TaskTimeLineQuery
+     * 这里要配置类型全路径且类要实现TaskTimeRangeQuery接口 如：com.xxx.TaskTimeLineQuery
      */
     private String taskScheduleTimeRangeClassName = "";
 
