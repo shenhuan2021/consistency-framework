@@ -1,24 +1,26 @@
 package cn.lifesmile.consistency.enums;
 
 /**
- * 执行方式
- */
-public enum ExecuteWayEnum {
+ * 执行模式枚举
+ *
+ **/
+public enum PerformanceEnum {
+
     /**
      * 立即执行
      */
-    RIGHT_NOW(1, "立即执行"),
+    PERFORMANCE_RIGHT_NOW(1, "立即执行"),
     /**
      * 调度执行
      */
-    SCHEDULE(2, "调度执行");
+    PERFORMANCE_SCHEDULE(2, "调度执行");
 
 
     private final Integer code;
 
     private final String desc;
 
-    ExecuteWayEnum(int code, String desc) {
+    PerformanceEnum(int code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -31,4 +33,5 @@ public enum ExecuteWayEnum {
     public String getDesc() {
         return desc;
     }
+
 }

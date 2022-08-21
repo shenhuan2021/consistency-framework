@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
 
 /**
  * 启用一致性框架
- * @author shawn
  */
 
 @Retention(RetentionPolicy.RUNTIME)

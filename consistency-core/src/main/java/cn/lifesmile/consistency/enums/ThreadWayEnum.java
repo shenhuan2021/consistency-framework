@@ -1,9 +1,11 @@
 package cn.lifesmile.consistency.enums;
 
 /**
- * 线程执行的方式
- */
+ * 线程模型枚举
+ *
+ **/
 public enum ThreadWayEnum {
+
     /**
      * 异步执行
      */
@@ -30,4 +32,5 @@ public enum ThreadWayEnum {
     public String getDesc() {
         return desc;
     }
+
 }
