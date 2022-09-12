@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 发送消息的组件
- **/
+ *
+ * @author shawn*/
 @Slf4j
 @Component
 public class SendMessageComponent {

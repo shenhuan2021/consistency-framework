@@ -10,7 +10,8 @@ import java.util.Date;
 
 /**
  * 自定义最终一致性任务时间范围查询定制
- **/
+ *
+ * @author shawn*/
 @Component // 需要加@Component 框架使用了spring容器来获取相关的实现类
 public class MyTaskTimeRangeQuery implements TaskTimeRangeQuery {
 

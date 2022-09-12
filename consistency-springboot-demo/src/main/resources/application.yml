@@ -16,7 +16,8 @@ consistency:
         thread-pool-keep-alive-time: 60
         thread-pool-keep-alive-time-unit: SECONDS
         thread-pool-queue-size: 200
-        # 框架自身有默认的实现类 来扫描查询任务的开始时间以及结束时间，这里给出定制化的实现类
+        # 框架自身有默认的实现类 来扫描查询任务的开始时间以及结束时间架自身有默认的实现类
+        #来扫描查询任务的开始时间以及结束时间，这里给出定制化的实现类，这里给出定制化的实现类
         #task-schedule-time-range-class-name:xxx.xxx.MyTaskTimeRangeQuery
     action:
       fail-count-threshold: 0
