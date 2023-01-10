@@ -1,1 +1,13 @@
-# consistency-framework
+# consistency-framework 
+
+## 介绍
+最终一致性框架，保证任务最后一定能执行。
+
+## 核心功能
+* 同步/异步执行
+* 固定时间/间隔时间任务调度执行
+* 超时/失败告警
+* ......
+
+## 执行流程
+![avatar](doc/images/流程图.png)
