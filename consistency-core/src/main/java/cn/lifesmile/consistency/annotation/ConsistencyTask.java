@@ -13,7 +13,8 @@ import java.lang.annotation.Target;
 /**
  * 最终一致性执行器注解
  *
- **/
+ * @author shawn
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
@@ -43,7 +44,8 @@ public @interface ConsistencyTask {
 
     /**
      * 告警表达式 如果满足告警表达式 会执行相关操作
-     *  默认："executeTimes > 1 && executeTimes < 5"
+     * 默认："executeTimes > 1 && executeTimes < 5"
+     *
      * @return 告警表达式
      */
     String alertExpression() default "executeTimes > 1 && executeTimes < 5";

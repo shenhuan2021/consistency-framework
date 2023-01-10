@@ -3,6 +3,7 @@ package cn.lifesmile.consistency.utils;
 /**
  * 当前线程的标志位
  *
+ * @author shawn
  */
 public class ThreadLocalUtil {
 

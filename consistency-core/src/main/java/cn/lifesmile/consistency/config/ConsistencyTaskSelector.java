@@ -5,6 +5,8 @@ import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * 导入配置
+ *
+ * @author shawn
  */
 public class ConsistencyTaskSelector implements ImportSelector {
     @Override

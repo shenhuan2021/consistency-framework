@@ -6,7 +6,8 @@ import cn.lifesmile.consistency.model.ConsistencyTaskInstance;
  * 一致性框架告警接口
  * 具体告警通知动作由业务服务实现
  *
- **/
+ * @author shawn
+ */
 public interface ConsistencyFrameworkAlerter {
 
     /**

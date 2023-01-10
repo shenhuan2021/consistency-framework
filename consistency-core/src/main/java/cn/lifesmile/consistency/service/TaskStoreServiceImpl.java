@@ -74,6 +74,7 @@ public class TaskStoreServiceImpl implements TaskStoreService {
         // 可以让框架开一个后台线程，定时去读取这个文件，把一个一个没有落库的任务实例从磁盘文件里读取出来，再次尝试走这段逻辑落库和执行
 
         // 如果执行模式不是立即执行的任务
+        // 等待后面的调度执行
         if (!PerformanceEnum.PERFORMANCE_RIGHT_NOW.getCode().equals(taskInstance.getPerformanceWay())) {
             return;
         }

@@ -9,7 +9,8 @@ import java.util.Date;
 
 /**
  * 一致性任务的实例信息
- **/
+ *
+ * @author shawn*/
 @Data
 @Builder
 @AllArgsConstructor

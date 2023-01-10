@@ -9,7 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * 控制同时可以有几个线程进行任务的执行的配置类
  *
- **/
+ * @author shawn
+ */
 @Data
 @Builder
 @NoArgsConstructor

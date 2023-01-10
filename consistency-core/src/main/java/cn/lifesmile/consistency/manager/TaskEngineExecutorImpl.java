@@ -31,7 +31,8 @@ import static cn.lifesmile.consistency.utils.ExpressionUtils.rewriteExpr;
 /**
  * 任务执行引擎实现类
  *
- **/
+ * @author shawn
+ */
 @Slf4j
 @Component
 public class TaskEngineExecutorImpl implements TaskEngineExecutor {
@@ -102,7 +103,8 @@ public class TaskEngineExecutorImpl implements TaskEngineExecutor {
             // 对于最终一致性的框架来说，他执行action，如果失败了，是要无限次重试
             // 如果说出现了一个失败，下一次必然会是要进行重试的，下一次是什么时候可以进行重试呢？
             // 在这里就需要给他去计算一个下一次进行重试的execute time
-            taskInstance.setExecuteTime(getNextExecuteTime(taskInstance)); // 这个下一次执行时间，非常关键的一个运算
+            // 这个下一次执行时间，非常关键的一个运算
+            taskInstance.setExecuteTime(getNextExecuteTime(taskInstance));
             int failResult = taskStoreService.markFail(taskInstance);
             log.info("[一致性任务框架] 标记为执行失败的结果为 [{}] 下次调度时间为 [{} - {}]", failResult > 0, taskInstance.getExecuteTime(), getFormatTime(taskInstance.getExecuteTime()));
             // 执行降级逻辑
@@ -164,8 +166,7 @@ public class TaskEngineExecutorImpl implements TaskEngineExecutor {
             parseExpressionAndDoAlert(taskInstance);
             taskInstance.setFallbackErrorMsg(getErrorMsg(e));
             int failResult = taskStoreService.markFallbackFail(taskInstance);
-            log.error("[一致性任务框架] 降级逻辑也失败了 标记为执行失败的结果为 [{}] 下次调度时间为 [{} - {}]", failResult > 0,
-                    taskInstance.getExecuteTime(), getFormatTime(taskInstance.getExecuteTime()), e);
+            log.error("[一致性任务框架] 降级逻辑也失败了 标记为执行失败的结果为 [{}] 下次调度时间为 [{} - {}]", failResult > 0, taskInstance.getExecuteTime(), getFormatTime(taskInstance.getExecuteTime()), e);
         }
     }
 
@@ -254,8 +255,7 @@ public class TaskEngineExecutorImpl implements TaskEngineExecutor {
 
         try {
             // 获取ConsistencyFrameworkAlerter的实现类并发送告警通知
-            getConsistencyFrameworkAlerterImpler(beansOfTypeMap, taskInstance)
-                    .sendAlertNotice(taskInstance);
+            getConsistencyFrameworkAlerterImpler(beansOfTypeMap, taskInstance).sendAlertNotice(taskInstance);
         } catch (Exception e) {
             log.error("[一致性任务框架] 调用业务服务实现具体的告警通知类时，发生异常", e);
             throw new ConsistencyException(e);

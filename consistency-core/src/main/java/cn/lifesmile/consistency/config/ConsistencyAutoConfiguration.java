@@ -19,7 +19,8 @@ import static cn.lifesmile.consistency.utils.DefaultValueUtils.getOrDefault;
 
 /**
  * 提供给SpringBoot的自动装配类 SPI使用
- **/
+ *
+ * @author shawn*/
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(value = {
@@ -51,7 +52,7 @@ public class ConsistencyAutoConfiguration {
      * @return 配置bean
      */
     @Bean
-    public ConsistencyConfiguration ConsistencyConfigService() {
+    public ConsistencyConfiguration consistencyConfigService() {
         // 对配置进行检查
         doConfigCheck(consistencyParallelTaskConfigProperties, shardModeConfigProperties);
 

@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
 /**
  * 启用一致性框架
  * 需要在启动类上进行开启
+ *
+ * @author shawn
  */
 
 @Retention(RetentionPolicy.RUNTIME)

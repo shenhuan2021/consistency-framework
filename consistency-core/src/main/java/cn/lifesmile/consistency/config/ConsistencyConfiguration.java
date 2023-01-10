@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 /**
  * 框架级配置参数
  *
+ * @author shawn
  */
 @Data
 @Builder

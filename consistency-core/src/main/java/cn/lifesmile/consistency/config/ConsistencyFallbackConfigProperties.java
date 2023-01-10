@@ -9,7 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * 一致性任务降级的相关配置
  *
- **/
+ * @author shawn
+ */
 @Data
 @Builder
 @NoArgsConstructor

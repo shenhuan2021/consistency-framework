@@ -29,6 +29,8 @@ import java.util.Date;
 
 /**
  * 切面
+ *
+ * @author shawn
  */
 @Slf4j
 @Aspect
@@ -98,22 +100,36 @@ public class ConsistencyTaskAspect {
         ConsistencyTaskInstance instance = ConsistencyTaskInstance.builder()
                 // taskId，他默认用的就是方法全限定名称，所以说，针对一个方法n多次调用，taskId是一样的
                 // taskId并不是唯一的id标识
-                .taskId(StringUtils.isEmpty(task.id()) ? fullyQualifiedName : task.id()).methodName(point.getSignature().getName()) // 调用方法名称
-                .parameterTypes(parameterTypes) // 调用方法入参的类型名称
-                .methodSignName(fullyQualifiedName) // 方法签名
-                .taskParameter(JSONUtil.toJsonStr(point.getArgs())) // 调用方法入参的对象数组，json串的转化
-                .performanceWay(task.performanceWay().getCode()) // 注解里配置的执行模式，直接执行 vs 调度执行
-                .threadWay(task.threadWay().getCode()) // 注解里配置的直接执行，同步还是异步，sync还是async，async会用我们自己初始化的线程池
-                .executeIntervalSec(task.executeIntervalSec()) // 每次任务执行间隔时间
-                .delayTime(task.delayTime())  // 任务执行延迟时间
-                .executeTimes(0) // 任务执行次数
-                .taskStatus(ConsistencyTaskStatusEnum.INIT.getCode()) // 任务当前所处的一个状态
-                .errorMsg("") // 任务执行的时候异常信息
-                .alertExpression(StringUtils.isEmpty(task.alertExpression()) ? "" : task.alertExpression()) // 限定了你的报警要在任务执行失败多少次的范围内去报警
-                .alertActionBeanName(StringUtils.isEmpty(task.alertActionBeanName()) ? "" : task.alertActionBeanName()) // 如果要告警的话，他的告警逻辑的调用bean是谁
-                .fallbackClassName(ReflectTools.getFullyQualifiedClassName(task.fallbackClass())) // 如果执行失败了，你的降级类是谁
-                .fallbackErrorMsg("") // 如果降级也失败了，降级失败的异常信息
-                .gmtCreate(date).gmtModified(date).build();
+                // 调用方法名称
+                .taskId(StringUtils.isEmpty(task.id()) ? fullyQualifiedName : task.id()).methodName(point.getSignature().getName())
+                // 调用方法入参的类型名称
+                .parameterTypes(parameterTypes)
+                // 方法签名
+                .methodSignName(fullyQualifiedName)
+                // 调用方法入参的对象数组，json串的转化
+                .taskParameter(JSONUtil.toJsonStr(point.getArgs()))
+                // 注解里配置的执行模式，直接执行 vs 调度执行
+                .performanceWay(task.performanceWay().getCode())
+                // 注解里配置的直接执行，同步还是异步，sync还是async，async会用我们自己初始化的线程池
+                .threadWay(task.threadWay().getCode())
+                // 每次任务执行间隔时间
+                .executeIntervalSec(task.executeIntervalSec())
+                // 任务执行延迟时间
+                .delayTime(task.delayTime())
+                // 任务执行次数
+                .executeTimes(0)
+                // 任务当前所处的一个状态
+                .taskStatus(ConsistencyTaskStatusEnum.INIT.getCode())
+                // 任务执行的时候异常信息
+                .errorMsg("")
+                // 限定了你的报警要在任务执行失败多少次的范围内去报警
+                .alertExpression(StringUtils.isEmpty(task.alertExpression()) ? "" : task.alertExpression())
+                // 如果要告警的话，他的告警逻辑的调用bean是谁
+                .alertActionBeanName(StringUtils.isEmpty(task.alertActionBeanName()) ? "" : task.alertActionBeanName())
+                // 如果执行失败了，你的降级类是谁
+                .fallbackClassName(ReflectTools.getFullyQualifiedClassName(task.fallbackClass()))
+                // 如果降级也失败了，降级失败的异常信息
+                .fallbackErrorMsg("").gmtCreate(date).gmtModified(date).build();
 
         // 设置预期执行的时间
         instance.setExecuteTime(getExecuteTime(instance));
@@ -133,10 +149,12 @@ public class ConsistencyTaskAspect {
     private long getExecuteTime(ConsistencyTaskInstance taskInstance) {
         if (PerformanceEnum.PERFORMANCE_SCHEDULE.getCode().equals(taskInstance.getPerformanceWay())) {
             long delayTimeMillSecond = TimeUtils.secToMill(taskInstance.getDelayTime());
-            return System.currentTimeMillis() + delayTimeMillSecond; // 如果你是调度模式，一般是跟delay time配合使用的，你要延迟多少时间去执行
+            // 如果你是调度模式，一般是跟delay time配合使用的，你要延迟多少时间去执行
+            return System.currentTimeMillis() + delayTimeMillSecond;
         } else {
             // 如果你要是设置了right now模式来执行的话，delayTime你设置了也是无效的
-            return System.currentTimeMillis(); // 执行时间就是当前时间
+            // 执行时间就是当前时间
+            return System.currentTimeMillis();
         }
     }
 
